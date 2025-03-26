@@ -1,0 +1,186 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:event_bus/event_bus.dart';
+import 'package:flutter/material.dart';
+import 'package:fyyc/api/UIHelper.dart';
+import 'package:fyyc/utlis/mixin/log/LogUtils.dart';
+import 'package:fyyc/widgets/load_state_widget.dart';
+import 'package:get/get.dart';
+
+import '../../base/pageWidget/base_stateless_widget.dart';
+import '../../bean/DataBean.dart';
+import '../../event/event_main.dart';
+import '../../ext/Ext.dart';
+import '../../res/colors.dart';
+import '../../utlis/SharedUtils.dart';
+import '../../utlis/language/Messages.dart';
+import '../../widgets/text_icon_button_widget.dart';
+import 'main_logic.dart';
+import 'material/material_entry/material_entry_logic.dart';
+import 'material/material_entry/material_entry_view.dart';
+import 'material/material_exit/material_exit_logic.dart';
+import 'material/material_exit/material_exit_view.dart';
+
+class MainPage extends BaseStatelessWidget<MainLogic> {
+  MainPage({Key? key}) : super(key: key);
+
+  final logic = Get.put(MainLogic());
+  final materialExitLogic = Get.put(MaterialExitLogic());
+  final materialEntryLogic = Get.put(MaterialEntryLogic());
+
+  final EventBus eventBus = Get.put(EventBus());
+
+  @override
+  Widget? titleWidget() {
+    return Obx(() => titleView(logic.apptitle.value));
+  }
+
+  @override
+  bool showDrawer() {
+    return true;
+  }
+
+  @override
+  List<Widget>? appBarActionWidget(BuildContext context) {
+    return [IconButton(onPressed: () {
+      eventBus.fire(EventMain(logic.selectedIndex.value, -1));
+    }, icon: const Icon(Icons.upload))];
+  }
+
+  List<Widget> tabViewList = [
+    MaterialEntryPage(),//入仓
+    MaterialExitPage(),//出仓
+  ];
+
+  @override
+  Widget createDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  ColorStyle.color_system100,
+                  ColorStyle.color_system900
+                ], // 渐变色从浅红到深红
+                begin: Alignment.topCenter, // 渐变开始位置
+                end: Alignment.bottomCenter, // 渐变结束位置
+              ),
+            ),
+            child: Container(
+              height: 200,
+              padding: EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextIconButtonWidget(
+                    icon: Icons.link,
+                    text: 'www.spit.hk',
+                    onPressed: () { },
+                  ),
+                  SizedBox(height: 10),
+                  TextIconButtonWidget(
+                    icon: Icons.phone,
+                    text: '+852 27558899',
+                    onPressed: () { },
+                  ),
+                  SizedBox(height: 10),
+                  TextIconButtonWidget(
+                    icon: Icons.public,
+                    text: 'Rm205, Block 16W, Hong Kong Science Park',
+                    onPressed: () {
+                      UIHelper.startLogin();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.storage),
+            title: Text(Globalization.material_entry.tr),
+            onTap: () {
+              materialEntryLogic.loadNet();
+              logic.selectedIndex.value = 0;
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.inventory),
+            title: Text(Globalization.material_exit.tr),
+            onTap: () {
+              materialExitLogic.loadNet();
+              logic.selectedIndex.value = 1;
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text(Globalization.sign_out.tr),
+            onTap: () {
+              DataBean bean = DataBean.fromJson(json.decode(SharedUtils.getString(USER_DATA)));
+              bean.password = null;
+              SharedUtils.setString(USER_DATA, json.encode(bean));
+              UIHelper.startLogin();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  // 点击网站地址的逻辑
+  void _launchWebsite() async {
+    const url = 'https://www.example.com';
+  }
+
+  // 点击电话的逻辑
+  void _launchPhone() async {
+    const phoneNumber = 'tel:+1234567890';
+  }
+
+  @override
+  Widget buildContent(BuildContext context) {
+    return Scaffold(
+      body: Obx(() => tabViewList[logic.selectedIndex.value]),
+      floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                eventBus.fire(EventMain(logic.selectedIndex.value, 0));
+              },
+              child: Icon(Icons.link, color: Colors.white),
+              mini: true,
+              elevation: 2, // 设置阴影
+              backgroundColor: ColorStyle.color_system,
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                eventBus.fire(EventMain(logic.selectedIndex.value, 1));
+              },
+              child: Icon(Icons.add, color: Colors.white),
+              mini: true,
+              elevation: 2,
+              backgroundColor: ColorStyle.color_system,
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                eventBus.fire(EventMain(logic.selectedIndex.value, 2));
+              },
+              child: Icon(Icons.qr_code_scanner, color: Colors.white),
+              mini: true, 
+              elevation: 2,
+              backgroundColor: ColorStyle.color_system, 
+            ),
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+}
