@@ -40,7 +40,7 @@ class DialogMaterialExitWidgets extends StatelessWidget {
     int quantity = itemData.quantity;
     int quantity2 = itemData.quantity2;
     int selectedIndex = 0;
-    String orderNumber = '';
+    String orderNumber = logic.orderno.value;
     String locName = itemData.locName ?? '';
     String loctionRoNo = itemData.loctionRoNo ?? '';
     int loctionNum = itemData.loctionNum;
@@ -167,9 +167,6 @@ class DialogMaterialExitWidgets extends StatelessWidget {
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                   border: OutlineInputBorder()),
               keyboardType: TextInputType.text,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
-              ],
               onChanged: (text) {
                 orderNumber = text;
               }),
@@ -183,6 +180,7 @@ class DialogMaterialExitWidgets extends StatelessWidget {
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                   border: OutlineInputBorder()),
+              keyboardType: TextInputType.text,
               onChanged: (text) {
                 remarks = text;
               }),

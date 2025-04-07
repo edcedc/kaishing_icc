@@ -54,7 +54,7 @@ class MyAlertDialog extends StatelessWidget {
               Get.dismiss(); // 关闭对话框
               negaTap?.call();
             },
-            child: Text(negaText.isEmpty ? Globalization.confirm.tr : negaText),
+            child: Text(negaText.isEmpty ? Globalization.cancel.tr : negaText),
           ),
         if (posiVisible)
           TextButton(
@@ -62,7 +62,7 @@ class MyAlertDialog extends StatelessWidget {
               Get.dismiss(); // 关闭对话框
               posiTap?.call();
             },
-            child: Text(posiText.isEmpty ? Globalization.cancel.tr : posiText),
+            child: Text(posiText.isEmpty ? Globalization.confirm.tr : posiText),
           ),
       ],
     );

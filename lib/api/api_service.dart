@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fyyc/utlis/SharedUtils.dart';
 import 'package:retrofit/http.dart';
@@ -5,13 +6,15 @@ import '../bean/BaseResponseBean.dart';
 import '../bean/DataBean.dart';
 import '../ext/Ext.dart';
 import '../http/dio_client.dart';
+import '../http/parse_error_logger.dart';
 part "api_service.g.dart";
+
 
 @RestApi()
 abstract class ApiService {
-  factory ApiService({Dio? dio, String? baseUrl}) {
+  factory ApiService({Dio? dio, String? baseUrl, ParseErrorLogger? errorLogger}) {
     dio ??= DioClient().dio;
-    return _ApiService(dio, baseUrl: baseUrl);
+    return _ApiService(dio, baseUrl: baseUrl, errorLogger: errorLogger);
   }
   static const String _url =
   // "192.168.2.30";
@@ -36,6 +39,20 @@ abstract class ApiService {
     @Field("lastcalldate") String? lastcalldate,
     @Field("userid") String? userid,
     @Field("companyID") String? companyID
+  );
+
+  //提交入库
+  @MultiPart()
+  @POST(BASE_URL + _asmx + "createMaterialInbound")
+  Future<BaseResponseBean> CreateMaterialInbound(
+      @Body() FormData formData,
+  );
+
+  //提交出库
+  @MultiPart()
+  @POST(BASE_URL + _asmx + "createMaterialOutbound")
+  Future<BaseResponseBean> CreateMaterialOutbound(
+      @Body() FormData formData,
   );
 
   //物料出入仓列表 0出1入

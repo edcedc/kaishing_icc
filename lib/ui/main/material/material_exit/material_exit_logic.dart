@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../../api/api_service.dart';
 import '../../../../base/controller/base_refresh_controller.dart';
+import '../../../../bean/BaseResponseBean.dart';
 import '../../../../bean/DataBean.dart';
 import '../../../../event/event_main.dart';
 import '../../../../ext/Ext.dart';
@@ -24,7 +25,8 @@ import '../../../../widgets/pull_smart_refresher.dart';
 import '../../../../widgets/zking_widget.dart';
 import '../../main_logic.dart';
 import '../material_entry/material_entry_logic.dart';
-
+import 'package:dio/dio.dart' as dio;
+import 'package:path/path.dart' as path;
 
 class MaterialExitLogic extends BaseRefreshController<ApiService> {
 
@@ -170,7 +172,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   @override
   void requestPageData({Refresh refresh = Refresh.first}) {
     DataBean bean = DataBean.fromJson(json.decode(SharedUtils.getString(USER_DATA)));
-    httpRequest<List<DataBean>>(api.getMaterialList(1, bean.loginID, bean.companyID), (value) {
+    httpRequest<List<DataBean>>(api.getMaterialList(1, bean.userid, bean.companyID), (value) {
       // if (refresh == Refresh.first || refresh == Refresh.pull) {
       //   listBean.clear();
       // }
@@ -200,7 +202,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
           title: Globalization.upload1.tr,
           content: sb.toString(),
           posiVisible: true,
-          negaTap: () {
+          posiTap: () {
             _apiCreateMaterialInbound(list);
           },
         ),
@@ -211,7 +213,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   void _apiGetMaterialList() {
     Get.showLoading();
     DataBean bean = DataBean.fromJson(json.decode(SharedUtils.getString(USER_DATA)));
-    httpRequest<List<DataBean>>(api.getMaterialList(1, bean.loginID, bean.companyID), (value) {
+    httpRequest<List<DataBean>>(api.getMaterialList(1, bean.userid, bean.companyID), (value) {
       Get.dismiss();
       if (refresh == Refresh.first || refresh == Refresh.pull) {
         listMaterialBean.clear();
@@ -269,6 +271,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   }
 
   Future<void> _apiCreateMaterialInbound(List<DataBean> list) async {
+    Get.showLoading();
     List<Map<String, dynamic>> jsonArray = [];
     for (DataBean bean in list) {
       Map<String, dynamic> jsonObject = {
@@ -284,16 +287,28 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
       };
       jsonArray.add(jsonObject);
     }
-    var base64 = 'await Base64Utils().convertFilesToBase64(listFile)';
-    Get.showLoading();
+    // var base64 = await Base64Utils().convertFilesToBase64(listFile);
     DataBean bean = DataBean.fromJson(json.decode(SharedUtils.getString(USER_DATA)));
-    httpRequest<DataBean>(api.createMaterialOutbound(bean.userid, bean.companyID, json.encode(jsonArray), base64, orderno.value), (value) {
+    Map<String, dynamic> map = {};
+    map["userid"] = bean.userid;
+    map["companyID"] = bean.companyID;
+    map["jsonData"] = json.encode(jsonArray);
+    map["orderno"] = orderno.value;
+    for (int i = 0; i < listFile.length; i++) {
+      File file = listFile[i];
+      map["file$i"] = [
+        await dio.MultipartFile.fromFile(file.path, filename: path.basename(file.path))
+      ];
+    }
+    dio.FormData formData = dio.FormData.fromMap(map);
+
+    httpRequest<BaseResponseBean>(api.CreateMaterialOutbound(formData), (value) {
       Get.dismiss();
       if(value.code == 200){
         Get.dialog(
           MyAlertDialog(
             content: Globalization.success.tr,
-            posiVisible: false,
+            negaVisible: false,
           ),
         );
         final materialEntryLogic = Get.put(MaterialEntryLogic());
@@ -324,13 +339,11 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
             }
           }
         }
+
         for (DataBean bean in listMaterialBean) {
-          var loc = bean.loc;
-          if (loc != null) {
-            int totalLoctionNum = loc.fold(0, (sum, element) => sum + element.loctionNum);
-            bean.inventoryNum = totalLoctionNum;
-          }
+          bean.inventoryNum = bean.loc?.fold(0, (sum, element) => sum! + element.loctionNum) ?? 0;
         }
+
         loadNet();
       }else{
 

@@ -40,11 +40,12 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
     int quantity = itemData.quantity;
     int selectedIndex = 0;
     double price = itemData.price;
-    String orderNumber = '';
+    String orderNumber = logic.orderno.value;
     String locName = itemData.locName ?? '';
     String loctionRoNo = itemData.loctionRoNo ?? '';
     int loctionNum = itemData.loctionNum;
     String remarks = itemData.remarks ?? '';
+    String supplier = itemData.supplier ?? '';
 
     if(listLocationBean.length != 0){
       var indexWhere = listLocationBean.indexWhere((bean) => bean.loctionRoNo == loctionRoNo);
@@ -110,10 +111,10 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
               if (text.isNotEmpty) {
                 double? parsedValue = double.tryParse(text);
                 if (parsedValue != null) {
-                  itemData.price = parsedValue;
+                  price = parsedValue;
                 }
               } else {
-                itemData.price = 0;
+                price = 0;
               }
             },
           ),
@@ -127,9 +128,6 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                   border: OutlineInputBorder()),
               keyboardType: TextInputType.text,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
-              ],
               onChanged: (text) {
                 orderNumber = text;
               }),
@@ -146,6 +144,7 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
               width: double.maxFinite,
               height: 40.0,
               child: DropdownButtonFormField<int>(
+                menuMaxHeight: 300,
                 isExpanded: true,
                 iconSize: 20,
                 decoration: const InputDecoration(
@@ -174,6 +173,19 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
             ),
           ),
           SizedBox(height: 10),
+          Text(Globalization.proveedores.tr),
+          SizedBox(height: 10),
+          TextField(
+              controller: TextEditingController(text: itemData.supplier),
+              autofillHints: [AutofillHints.name],
+              decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                  border: OutlineInputBorder()),
+              keyboardType: TextInputType.text,
+              onChanged: (text) {
+                supplier = text;
+              }),
+          SizedBox(height: 10),
           Text(Globalization.remarks.tr),
           SizedBox(height: 10),
           TextField(
@@ -183,6 +195,7 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                   border: OutlineInputBorder()),
+              keyboardType: TextInputType.text,
               onChanged: (text) {
                 remarks = text;
               }),
@@ -203,6 +216,7 @@ class DialogMaterialEntryWidgets extends StatelessWidget {
               itemData.locName = locName;
               itemData.loctionRoNo = loctionRoNo;
               itemData.remarks = remarks;
+              itemData.supplier = supplier;
               itemData.isEdit = true;
               // Fluttertoast.showToast(msg: Globalization.success.tr);
               logic.listBean[index] = itemData;

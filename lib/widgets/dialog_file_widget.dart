@@ -4,7 +4,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fyyc/utlis/mixin/toast/toast_mixin.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../utlis/language/Messages.dart';
 import 'package:path/path.dart' as p;
 
@@ -35,6 +39,24 @@ class _DialogFileWidget extends State<DialogFileWidget> {
     if (widget.initialFiles != null) {
       _files = widget.initialFiles!.toList();
     }
+  }
+
+  /*拍照*/
+  _photo() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      await Permission.camera.request();
+    }
+    XFile? image = await ImagePicker().pickImage(
+      source: ImageSource.camera, // 指定从相机拍摄
+      imageQuality: 20, // 可选参数，图片质量（0-100）
+      preferredCameraDevice: CameraDevice.rear, // 可选参数，指定前后摄像头
+    );
+    if (image != null) {
+      _files.add(File(image.path));
+      print(image.path);
+    }
+    setState(() {});
   }
 
   Future<void> _addItem() async {
@@ -158,9 +180,9 @@ class _DialogFileWidget extends State<DialogFileWidget> {
                       elevation: 5,
                     ),
                     onPressed: () {
-                      _addItem();
+                      _photo();
                     },
-                    child: Text('${Globalization.add.tr}/${Globalization.profile.tr}', style: TextStyle(fontSize: 18)),
+                    child: Text('${Globalization.photo.tr}', style: TextStyle(fontSize: 18)),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -170,6 +192,22 @@ class _DialogFileWidget extends State<DialogFileWidget> {
                       elevation: 5,
                     ),
                     onPressed: () {
+                      _addItem();
+                    },
+                    child: Text('${Globalization.local_file.tr}', style: TextStyle(fontSize: 18)),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                    ),
+                    onPressed: () {
+                      if(_files.length > 3){
+                        Fluttertoast.showToast(msg: Globalization.text5.tr);
+                        return;
+                      }
                       widget.onSave(_files);
                       Get.back();
                     },

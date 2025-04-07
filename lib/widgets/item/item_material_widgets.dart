@@ -83,6 +83,16 @@ class ItemMaterialWidgets extends StatelessWidget {
                     Expanded(child: AutoSizeText('${itemData.inventoryNum}')),
                   ],
                 ),
+                Visibility(
+                  visible: itemData.validityDate != null && itemData.validityDate != "",
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(Globalization.expiration_date.tr + "："),
+                      Expanded(child: AutoSizeText('${itemData.validityDate}')),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 5),
                 GridView.builder(
                   shrinkWrap: true, // 使 GridView 的高度自适应

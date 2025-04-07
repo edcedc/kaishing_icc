@@ -9,6 +9,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import '../api/UIHelper.dart';
 import '../bean/DataBean.dart';
 import '../utlis/language/Messages.dart';
+import 'hig_hlight_text.dart';
 import 'item/item_material_widgets.dart';
 
 import 'package:flutter/material.dart';
@@ -45,12 +46,14 @@ class _DialogMaterialListWidgetsState extends State<DialogMaterialListWidgets> {
   }
 
   void _onSearchChanged() {
-    final text = _controller.text;
+    final text = _controller.text.toLowerCase(); // 将搜索内容转换为小写
     setState(() {
       if (text.isEmpty) {
         _filteredBeans = widget.listBean;
       } else {
-        _filteredBeans = widget.listBean.where((item) => item.materialNo?.contains(text) ?? false).toList();
+        _filteredBeans = widget.listBean.where((item) =>
+        (item.materialNo?.toLowerCase()?.contains(text) ?? false) || // 转换为小写后比较
+            (item.materialName?.toLowerCase()?.contains(text) ?? false)).toList(); // 转换为小写后比较
       }
     });
   }
@@ -108,9 +111,17 @@ class _DialogMaterialListWidgetsState extends State<DialogMaterialListWidgets> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.materialNo ?? 'N/A', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          HighlightText(
+                            text: item.materialNo ?? 'N/A',
+                            highlight: _controller.text,
+                            defaultStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 15),
+                          ),
                           SizedBox(height: 2),
-                          Text(item.materialName ?? 'N/A', style: TextStyle(fontSize: 12)),
+                          HighlightText(
+                            text: item.materialName ?? 'N/A',
+                            highlight: _controller.text,
+                            defaultStyle: TextStyle(color: Colors.black87, fontSize: 13),
+                          ),
                         ],
                       ),
                     ),

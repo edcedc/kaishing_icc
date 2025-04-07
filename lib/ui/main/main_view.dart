@@ -152,30 +152,41 @@ class MainPage extends BaseStatelessWidget<MainLogic> {
           children: [
             FloatingActionButton(
               onPressed: () {
-                eventBus.fire(EventMain(logic.selectedIndex.value, 0));
-              },
-              child: Icon(Icons.link, color: Colors.white),
-              mini: true,
-              elevation: 2, // 设置阴影
-              backgroundColor: ColorStyle.color_system,
-            ),
-            FloatingActionButton(
-              onPressed: () {
                 eventBus.fire(EventMain(logic.selectedIndex.value, 1));
               },
-              child: Icon(Icons.add, color: Colors.white),
-              mini: true,
+              mini: false,
               elevation: 2,
               backgroundColor: ColorStyle.color_system,
+              child: Transform.scale(
+                scale: 1.6,
+                child: Icon(Icons.add, color: Colors.white),
+              ),
             ),
+            SizedBox(height: 10),
+            FloatingActionButton(
+              onPressed: () {
+                eventBus.fire(EventMain(logic.selectedIndex.value, 0));
+              },
+              mini: false,
+              elevation: 2,
+              backgroundColor: ColorStyle.color_system,
+              child: Transform.scale(
+                scale: 1.6,
+                child: Icon(Icons.link, color: Colors.white),
+              ),
+            ),
+            SizedBox(height: 10),
             FloatingActionButton(
               onPressed: () {
                 eventBus.fire(EventMain(logic.selectedIndex.value, 2));
               },
-              child: Icon(Icons.qr_code_scanner, color: Colors.white),
-              mini: true, 
+              mini: false,
               elevation: 2,
-              backgroundColor: ColorStyle.color_system, 
+              backgroundColor: ColorStyle.color_system,
+              child: Transform.scale(
+                scale: 1.6,
+                child: Icon(Icons.qr_code_scanner, color: Colors.white),
+              ),
             ),
           ],
         ),

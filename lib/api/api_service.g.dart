@@ -12,11 +12,14 @@ class _ApiService implements ApiService {
   _ApiService(
     this._dio, {
     this.baseUrl,
+    this.errorLogger,
   });
 
   final Dio _dio;
 
   String? baseUrl;
+
+  final ParseErrorLogger? errorLogger;
 
   @override
   Future<List<DataBean>> GetCheckLogin(
@@ -55,7 +58,7 @@ class _ApiService implements ApiService {
           .map((dynamic i) => DataBean.fromJson(i as Map<String, dynamic>))
           .toList();
     } on Object catch (e, s) {
-      
+      errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;
@@ -106,7 +109,81 @@ class _ApiService implements ApiService {
             : List.empty(),
       );
     } on Object catch (e, s) {
-      
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponseBean<dynamic>> CreateMaterialInbound(FormData formData) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = formData;
+    final _options = _setStreamType<BaseResponseBean<dynamic>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          '${SharedUtils.getString(BASE_URL)}/MobileWebService.asmx/createMaterialInbound',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponseBean<dynamic> _value;
+    try {
+      _value = BaseResponseBean<dynamic>.fromJson(
+        _result.data!,
+        (json) => json as dynamic,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponseBean<dynamic>> CreateMaterialOutbound(FormData formData) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = formData;
+    final _options = _setStreamType<BaseResponseBean<dynamic>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+      _dio.options,
+      '${SharedUtils.getString(BASE_URL)}/MobileWebService.asmx/createMaterialOutbound',
+      queryParameters: queryParameters,
+      data: _data,
+    )
+        .copyWith(
+        baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponseBean<dynamic> _value;
+    try {
+      _value = BaseResponseBean<dynamic>.fromJson(
+        _result.data!,
+            (json) => json as dynamic,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;
@@ -151,7 +228,7 @@ class _ApiService implements ApiService {
           .map((dynamic i) => DataBean.fromJson(i as Map<String, dynamic>))
           .toList();
     } on Object catch (e, s) {
-      
+      errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;
@@ -200,7 +277,7 @@ class _ApiService implements ApiService {
           .map((dynamic i) => DataBean.fromJson(i as Map<String, dynamic>))
           .toList();
     } on Object catch (e, s) {
-      
+      errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;
@@ -248,7 +325,7 @@ class _ApiService implements ApiService {
     try {
       _value = DataBean.fromJson(_result.data!);
     } on Object catch (e, s) {
-      
+      errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;
@@ -256,12 +333,12 @@ class _ApiService implements ApiService {
 
   @override
   Future<DataBean> createMaterialOutbound(
-      String? userid,
-      String? companyID,
-      String? jsonData,
-      String? files,
-      String orderno,
-      ) async {
+    String? userid,
+    String? companyID,
+    String? jsonData,
+    String? files,
+    String orderno,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
@@ -281,13 +358,13 @@ class _ApiService implements ApiService {
       contentType: 'application/x-www-form-urlencoded',
     )
         .compose(
-      _dio.options,
-      '${SharedUtils.getString(BASE_URL)}/MobileWebService.asmx/createMaterialOutbound',
-      queryParameters: queryParameters,
-      data: _data,
-    )
+          _dio.options,
+          '${SharedUtils.getString(BASE_URL)}/MobileWebService.asmx/createMaterialOutbound',
+          queryParameters: queryParameters,
+          data: _data,
+        )
         .copyWith(
-        baseUrl: _combineBaseUrls(
+            baseUrl: _combineBaseUrls(
           _dio.options.baseUrl,
           baseUrl,
         )));
@@ -296,7 +373,7 @@ class _ApiService implements ApiService {
     try {
       _value = DataBean.fromJson(_result.data!);
     } on Object catch (e, s) {
-
+      errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;

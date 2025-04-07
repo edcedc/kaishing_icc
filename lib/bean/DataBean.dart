@@ -45,6 +45,12 @@ class DataBean {
   @JsonKey(name: 'order_number')
   String? orderNumber;
 
+  @JsonKey(name: 'ValidityDate')
+  String? validityDate;
+
+  @JsonKey(name: 'LocRoNo')
+  String? locRoNo;
+
   @JsonKey(name: 'MaterialNo')
   String? materialNo;
 
@@ -84,6 +90,9 @@ class DataBean {
   @JsonKey(name: 'LoctionName')
   String? loctionName;
 
+  @JsonKey(name: 'Supplier')
+  String? supplier;
+
   @JsonKey(name: 'isSave')
   bool isSave;
 
@@ -97,27 +106,30 @@ class DataBean {
   List<DataBean>? loc;
 
   DataBean({
-    this.loginID = '',
-    this.roNo = '',
-    this.companyID = '',
-    this.password = '',
+    this.loginID = null,
+    this.roNo = null,
+    this.companyID = null,
+    this.password = null,
     this.id = 0,
     this.quantity = 0,
     this.quantity2 = 0,
     this.loctionNum = 0,
     this.inventoryLimit = 0,
     this.inventoryNum = 0,
-    this.orderNumber = '',
-    this.status = '',
+    this.orderNumber = null,
+    this.status = null,
     this.price = 0.0,
     this.code = 0,
-    this.location = '',
-    this.remarks = '',
-    this.loctionName = '',
-    this.loctionRoNo = '',
-    this.userid = '',
-    this.locationName = '',
-    this.image = '',
+    this.location = null,
+    this.validityDate = null,
+    this.locRoNo = null,
+    this.remarks = null,
+    this.loctionName = null,
+    this.loctionRoNo = null,
+    this.userid = null,
+    this.locationName = null,
+    this.image = null,
+    this.supplier = null,
     this.isSave = false,
     this.isEdit = false,
     this.pic,

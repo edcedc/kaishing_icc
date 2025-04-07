@@ -54,6 +54,11 @@ class Globalization {
   static const String profile = "资料";
   static const String upload1 = "是否上传";
   static const String text4 = "出仓数量有误";
+  static const String photo = "拍照";
+  static const String local_file = "本地文件";
+  static const String proveedores  = "供应商";
+  static const String expiration_date = "有效日期";
+  static const String text5 = "不能超过3件";
 
 }
 
@@ -108,6 +113,11 @@ class Messages extends Translations {
           Globalization.no_data: "No Data",
           Globalization.exit_location: "Exit Location",
           Globalization.text4: "The exit quantity is error",
+          Globalization.photo: "Photo",
+          Globalization.local_file: "File",
+          Globalization.proveedores : "Proveedores ",
+          Globalization.expiration_date: "Expiration Date",
+          Globalization.text5: "No more than 3 pieces",
         },
         "zh_CN": {
           Globalization.release_and_refresh: "释放立即刷新",
@@ -155,6 +165,12 @@ class Messages extends Translations {
           Globalization.please_login_again: "请重新登录",
           Globalization.no_data: "暂无数据",
           Globalization.text4: "出仓数量有误",
+          Globalization.photo: "相机",
+          Globalization.local_file: "文件",
+          Globalization.proveedores: "供应商",
+          Globalization.expiration_date: "有效日期",
+          Globalization.text5: "不能超过三件",
+
         },
         "zh_HK": {
           Globalization.release_and_refresh: "释放立即刷新",
@@ -182,8 +198,8 @@ class Messages extends Translations {
           Globalization.material_name: "物料名稱",
           Globalization.usage: "用途",
           Globalization.location: "位置",
-          Globalization.minimum_stock: "最低存货量",
-          Globalization.current_stock: "當前存货量",
+          Globalization.minimum_stock: "最低存貨量",
+          Globalization.current_stock: "當前存貨量",
           Globalization.quantity: "入倉數量",
           Globalization.unit_price: "單價",
           Globalization.order_number: "訂單編號",
@@ -202,7 +218,11 @@ class Messages extends Translations {
           Globalization.please_login_again: "請重新登入",
           Globalization.no_data: "暫無數據",
           Globalization.text4: "出倉數量有誤",
-
+          Globalization.photo: "相機",
+          Globalization.local_file: "檔案",
+          Globalization.proveedores: "供應商",
+          Globalization.expiration_date: "有效期限",
+          Globalization.text5: "不能超過三件",
         },
       };
 }
