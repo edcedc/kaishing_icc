@@ -3,13 +3,8 @@
 <plist version="1.0">
 <dict>
   <key>method</key>
-  <string>ad-hoc</string>  <!-- 选择分发方式：ad-hoc、enterprise 等 -->
+  <string>none</string>  <!-- 指定为 none，表示不进行签名 -->
   <key>signingStyle</key>
   <string>manual</string>
-  <key>provisioningProfiles</key>
-  <dict>
-    <key>YOUR_BUNDLE_ID</key>
-    <string>b42a67a4386ce4d82e59e26c73545f7db1e91dc6</string>  <!-- 替换为你的描述文件 UUID -->
-  </dict>
 </dict>
 </plist>
