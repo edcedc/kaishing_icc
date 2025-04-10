@@ -1,0 +1,31 @@
+name: Flutter Build IPA
+
+on:
+  push:
+    branches:
+      - main  # 可以根据需要修改分支名称
+
+jobs:
+  build-ipa:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build iOS app
+        run: flutter build ipa --no-codesign
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-ipa
+          path: build/ios/ipa/*.ipa
