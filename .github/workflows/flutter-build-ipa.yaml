@@ -1,18 +1,37 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+name: Build Flutter IPA
+
+on:
+  push:
+    branches:
+      - main  # 触发构建的分支
+  workflow_dispatch:  # 手动触发
+
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: macos-latest
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'  # 指定 Flutter 版本
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS app
+        run: flutter build ios --release --no-codesign  # 构建无签名的 iOS 应用[^3^]
+
+      - name: Create IPA
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner archive -archivePath build/ios/Runner.xcarchive
+          xcodebuild -exportArchive -archivePath build/ios/Runner.xcarchive -exportPath build/ios/Runner.ipa -exportOptionsPlist ios/ExportOptions.plist
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: Flutter IPA
+          path: build/ios/Runner.ipa
