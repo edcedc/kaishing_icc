@@ -23,7 +23,7 @@ jobs:
         run: flutter pub get
 
       - name: Build iOS app
-        run: flutter build ios --release --no-codesign  # 构建无签名的 iOS 应用[^3^]
+        run: flutter build ios --release --no-codesign  # 构建无签名的 iOS 应用
 
       - name: Create IPA
         run: |
