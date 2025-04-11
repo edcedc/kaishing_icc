@@ -3,29 +3,39 @@ name: Flutter Build IPA
 on:
   push:
     branches:
-      - main  # 可以根据需要修改分支名称
+      - main  # 触发分支
+  workflow_dispatch:  # 手动触发
 
 jobs:
-  build-ipa:
+  build:
+    name: Build iOS IPA
     runs-on: macos-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: 'stable'  # 指定 Flutter 版本
 
-      - name: Get dependencies
+      - name: Install dependencies
         run: flutter pub get
 
       - name: Build iOS app
-        run: flutter build ipa --no-codesign
+        run: flutter build ios --release --no-codesign
+
+      - name: Create IPA
+        run: |
+          cd build/ios/iphoneos
+          mkdir Payload
+          mv Runner.app Payload/
+          zip -r Runner.ipa Payload
+          mv Runner.ipa ../../../../
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: app-ipa
-          path: build/ios/ipa/*.ipa
+          name: Runner.ipa
+          path: Runner.ipa
