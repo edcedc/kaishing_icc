@@ -1,37 +1,31 @@
-name: Build Flutter IPA
+name: Flutter Build IPA
 
 on:
   push:
     branches:
-      - main  # 触发构建的分支
-  workflow_dispatch:  # 手动触发
+      - main  # 可以根据需要修改分支名称
 
 jobs:
-  build:
+  build-ipa:
     runs-on: macos-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'  # 指定 Flutter 版本
+          channel: 'stable'
 
-      - name: Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
       - name: Build iOS app
-        run: flutter build ios --release --no-codesign  # 构建无签名的 iOS 应用
-
-      - name: Create IPA
-        run: |
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner archive -archivePath build/ios/Runner.xcarchive
-          xcodebuild -exportArchive -archivePath build/ios/Runner.xcarchive -exportPath build/ios/Runner.ipa -exportOptionsPlist ios/ExportOptions.plist
+        run: flutter build ipa --no-codesign
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
-          name: Flutter IPA
-          path: build/ios/Runner.ipa
+          name: app-ipa
+          path: build/ios/ipa/*.ipa
