@@ -2,40 +2,39 @@ name: Flutter Build IPA
 
 on:
   push:
-    branches:
-      - main  # 触发分支
-  workflow_dispatch:  # 手动触发
+    branches: [ main ] # 可以根据需要修改触发的分支
+  pull_request:
+    branches: [ main ]
+
+env:
+  FLUTTER_VERSION: "3.16.0" # 使用你项目所需的 Flutter 版本
 
 jobs:
-  build:
-    name: Build iOS IPA
-    runs-on: macos-latest
-
+  build-unsigned-ipa:
+    runs-on: macos-latest # 必须使用 macOS 环境来构建 iOS 应用
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'  # 指定 Flutter 版本
-
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Build iOS app
-        run: flutter build ios --release --no-codesign
-
-      - name: Create IPA
+          
+      - name: Build IPA without signing
         run: |
-          cd build/ios/iphoneos
-          mkdir Payload
-          mv Runner.app Payload/
-          zip -r Runner.ipa Payload
-          mv Runner.ipa ../../../../
-
-      - name: Upload IPA
+          cd ios
+          pod install
+          cd ..
+          flutter build ipa --no-codesign
+          
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Runner.ipa
-          path: Runner.ipa
+          name: unsigned-ipa
+          path: build/ios/ipa/*.ipa
