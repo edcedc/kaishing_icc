@@ -1,40 +1,42 @@
 name: Flutter Build IPA
 
 on:
-  push:
-    branches: [ main ] # 可以根据需要修改触发的分支
-  pull_request:
-    branches: [ main ]
-
-env:
-  FLUTTER_VERSION: "3.16.0" # 使用你项目所需的 Flutter 版本
+  workflow_dispatch:
 
 jobs:
-  build-unsigned-ipa:
-    runs-on: macos-latest # 必须使用 macOS 环境来构建 iOS 应用
-    
+  build-ios:
+    name: 🎉 iOS Build
+    runs-on: macos-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
-          
-      - name: Install dependencies
-        run: flutter pub get
-          
-      - name: Build IPA without signing
-        run: |
-          cd ios
-          pod install
-          cd ..
-          flutter build ipa --no-codesign
-          
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+          architecture: x64
+      - run: flutter pub get
+      
+
+      - run: pod repo update
+        working-directory: ios
+
+      - run: flutter build ios --release --no-codesign
+
+      - run: mkdir Payload
+        working-directory: build/ios/iphoneos
+
+      - run: mv Runner.app/ Payload
+        working-directory: build/ios/iphoneos
+
+      - name: Zip output
+        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
+        working-directory: build/ios/iphoneos
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: unsigned-ipa
-          path: build/ios/ipa/*.ipa
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is first release"
