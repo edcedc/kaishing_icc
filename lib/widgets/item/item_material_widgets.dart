@@ -1,40 +1,107 @@
-import 'dart:math';
-
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fyyc/api/UIHelper.dart';
+import 'package:fyyc/utlis/mixin/log/LogUtils.dart';
 import 'package:get/get.dart';
-import '../../bean/DataBean.dart';
-import '../../utlis/language/Messages.dart';
 
-class ItemMaterialWidgets extends StatelessWidget {
+import '../../api/UIHelper.dart';
+import '../../bean/DataBean.dart';
+import '../../event/event_item_upload.dart';
+import '../../res/language/Messages.dart';
+import '../../ui/main/main_logic.dart';
+import '../../ui/main/material/material_entry/material_entry_logic.dart';
+import '../../ui/main/material/material_exit/material_exit_logic.dart';
+
+class ItemMaterialWidgets extends StatefulWidget {
 
   final DataBean itemData;
   final int index;
   final VoidCallback? onTapCallback;
   final VoidCallback? onItemTapCallback;
+  final VoidCallback? onLongPressCallback;
 
-  ItemMaterialWidgets({Key? key, required this.itemData, required this.index, this.onItemTapCallback, this.onTapCallback})
-      : super(key: key);
+  const ItemMaterialWidgets({
+    Key? key,
+    required this.itemData,
+    required this.index,
+    this.onItemTapCallback,
+    this.onTapCallback,
+    this.onLongPressCallback,
+  }) : super(key: key);
+
+  @override
+  State<ItemMaterialWidgets> createState() => _ItemMaterialWidgetsState();
+}
+
+class _ItemMaterialWidgetsState extends State<ItemMaterialWidgets> {
+
+  bool isLongPressed = false;
+
+  bool isALL = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Get.put(EventBus()).on<EventItemUpload>().listen((event) {
+      setState(() {
+        this.isLongPressed = event.isLongPressed;
+        // if(!this.isLongPressed){
+        //   widget.itemData.isDelete = false;
+        // }
+
+        this.isALL = event.isAll;
+        widget.itemData.isDelete = this.isALL;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
-      color: Colors.white,
-      child: InkWell(
-        onTap: onItemTapCallback,
-        borderRadius: BorderRadius.circular(20.w),
-        child: _createContent(),
+    return GestureDetector(
+      /*onLongPress: () {
+        setState(() => isLongPressed = true);
+        widget.onLongPressCallback?.call();
+      },*/
+      onTap: () {
+        if(isLongPressed){
+          setState(() {
+            widget.itemData.isDelete = !widget.itemData.isDelete;
+          });
+        }else{
+          widget.onItemTapCallback?.call();
+        }
+      },
+      child: Card(
+        margin: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
+        color: Colors.white,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20.w),
+          child: Row(
+            children: [
+              Visibility(
+                visible: isLongPressed,
+                child: _buildImagePickerButton(),
+              ),
+              Expanded(child: _createContent()
+            )
+          ],),
+        ),
       ),
     );
   }
 
+  // 图片选择按钮组件
+  Widget _buildImagePickerButton() {
+    return Icon(
+      widget.itemData.isDelete ? Icons.check_box : Icons.check_box_outline_blank,
+      color: widget.itemData.isDelete ? Colors.blue : Colors.grey,
+    );
+  }
+
   Widget _createContent() {
-    var pic = itemData.pic;
+    var pic = widget.itemData.pic;
     return Container(
       padding: EdgeInsets.all(10),
       width: double.infinity,
@@ -47,56 +114,56 @@ class ItemMaterialWidgets extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(itemData.materialNo ?? "", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(widget.itemData.materialNo ?? "", style: TextStyle(fontWeight: FontWeight.bold)),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(Globalization.material_name.tr + "："),
-                    Expanded(child: AutoSizeText(itemData.materialName ?? "", maxLines: 2)),
+                    Expanded(child: AutoSizeText(widget.itemData.materialName ?? "", maxLines: 2)),
                   ],
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(Globalization.usage.tr + "："),
-                    Expanded(child: AutoSizeText(itemData.purposeName ?? "", maxLines: 2)),
+                    Expanded(child: AutoSizeText(widget.itemData.purposeName ?? "", maxLines: 2)),
                   ],
                 ),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start, 
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(Globalization.location.tr + "："),
-                    Expanded(child: AutoSizeText(itemData.locName ?? "", maxLines: 2)),
+                    Expanded(child: AutoSizeText(widget.itemData.locName ?? "", maxLines: 2)),
                   ],
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(Globalization.minimum_stock.tr + "："),
-                    Expanded(child: AutoSizeText('${itemData.inventoryLimit}')),
+                    Expanded(child: AutoSizeText('${widget.itemData.inventoryLimit}')),
                   ],
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(Globalization.current_stock.tr + "："),
-                    Expanded(child: AutoSizeText('${itemData.inventoryNum}')),
+                    Expanded(child: AutoSizeText('${widget.itemData.inventoryNum}')),
                   ],
                 ),
                 Visibility(
-                  visible: itemData.validityDate != null && itemData.validityDate != "",
+                  visible: widget.itemData.validityDate != null && widget.itemData.validityDate != "",
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(Globalization.expiration_date.tr + "："),
-                      Expanded(child: AutoSizeText('${itemData.validityDate}')),
+                      Expanded(child: AutoSizeText('${widget.itemData.validityDate}')),
                     ],
                   ),
                 ),
                 SizedBox(height: 5),
                 GridView.builder(
-                  shrinkWrap: true, // 使 GridView 的高度自适应
-                  physics: NeverScrollableScrollPhysics(), // 禁止滚动
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: 5,
@@ -119,10 +186,13 @@ class ItemMaterialWidgets extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: onTapCallback, // 为 Icon 添加点击事件
+            // onTap: widget.onTapCallback,
             child: Container(
-              padding: EdgeInsets.all(5), // 增大点击范围
-              child: Icon(Icons.add_box_outlined,  color: itemData.isEdit ? Colors.green : Colors.grey),
+              padding: EdgeInsets.all(5),
+              child: Icon(
+                Icons.add_box_outlined,
+                color: widget.itemData.isEdit ? Colors.green : Colors.grey,
+              ),
             ),
           ),
         ],

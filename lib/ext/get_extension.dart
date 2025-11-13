@@ -2,8 +2,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../res/language/Messages.dart';
 import '../res/strings.dart';
-import '../utlis/language/Messages.dart';
 import '../widgets/dialog/dialog_common_style.dart';
 import '../widgets/dialog/dialog_loading.dart';
 

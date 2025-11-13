@@ -11,11 +11,12 @@ import '../../../../api/api_service.dart';
 import '../../../../base/controller/base_refresh_controller.dart';
 import '../../../../bean/BaseResponseBean.dart';
 import '../../../../bean/DataBean.dart';
+import '../../../../event/event_item_upload.dart';
 import '../../../../event/event_main.dart';
 import '../../../../ext/Ext.dart';
+import '../../../../res/language/Messages.dart';
 import '../../../../utlis/SharedUtils.dart';
 import '../../../../utlis/base64_utils.dart';
-import '../../../../utlis/language/Messages.dart';
 import '../../../../widgets/dialog/dialog_alert.dart';
 import '../../../../widgets/dialog_file_widget.dart';
 import '../../../../widgets/dialog_material_entry_widgets.dart';
@@ -40,11 +41,13 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
 
   final mainLogic = Get.put(MainLogic());
 
-  var pageType = 1.obs;
+  var pageType = 1;
 
   var zkingCode = ''.obs;
 
   Rx<String> orderno = ''.obs;
+
+  RxBool isLongPressed = false.obs;
 
   //出仓材料回调
   List<File> listFile = [];
@@ -53,7 +56,6 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   void onReady() {
     super.onReady();
     loadNet();
-    requestPageData();
     Get.put(EventBus()).on<EventMain>().listen((event) {
       if (event.type == 1) {
         switch (event.tapType) {
@@ -70,12 +72,44 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
           case 2:
             _showZkingDialog();
             break;
+          case 3:
+            _showDeleteItem();
+            break;
           default:
             _upload();
             break;
         }
       }
     });
+    Get.put(EventBus()).on<EventItemUpload>().listen((event) {
+      if(!event.isLongPressed){
+        this.isLongPressed.value = event.isLongPressed;
+      }
+    });
+  }
+
+  void _showDeleteItem() {
+    List<DataBean> list = listBean.where((bean) => bean.isDelete).toList();
+    if (list.length != 0) {
+      Get.dialog(
+        MyAlertDialog(
+          title: Globalization.appName.tr,
+          content: Globalization.delete1.tr,
+          posiVisible: true,
+          posiTap: () {
+            listBean.removeWhere((bean) => bean.isDelete == true);
+            final remainingIds = listBean.map((bean) => bean.id).toSet();
+            for (final material in listMaterialBean) {
+              material.isSave = remainingIds.contains(material.id);
+            }
+            uploadStatus();
+            if(listBean.length == 0){
+              Get.put(EventBus()).fire(EventItemUpload(isLongPressed: false, isAll: false));
+            }
+          },
+        ),
+      );
+    }
   }
 
   void _showFile() {
@@ -112,7 +146,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
           if(materialBean != null){
             listBean.add(materialBean);
             materialBean.isSave = true;
-            loadNet();
+            uploadStatus();
           }
         }),
       ),
@@ -121,13 +155,6 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   }
 
   void _showCustomDialog() {
-    /*Map<String, DataBean> materialMap = {
-      for (var item in listMaterialBean) item.RoNo!: item..isSave = false,
-    };
-    for (var callbackItem in listMaterialCallbackBean) {
-      materialMap[callbackItem.RoNo]?.isSave = true;
-    }
-    final uniqueListMaterialBean = materialMap.values.toList();*/
     Get.bottomSheet(
       isScrollControlled: true,
       Container(
@@ -138,21 +165,16 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: DialogMaterialListWidgets(
-          pageType.value,
+          pageType,
           listMaterialBean,
           onSave: (filteredList) {
-            // listMaterialCallbackBean.clear();
-            // listMaterialCallbackBean.addAll(filteredList);
-
-            Set<int> filteredRoNoSet = filteredList.map((bean) => bean.id!).toSet();
-            listBean.removeWhere((bean) => !filteredRoNoSet.contains(bean.id));
-
-            for (var bean in filteredList) {
-              if (!listBean.any((item) => item.id == bean.id)) {
-                listBean.add(bean);
-              }
-            }
-            loadNet();
+            final Set<int> allowedIds = filteredList.map((e) => e.id!).toSet();
+            listBean.removeWhere((bean) => !allowedIds.contains(bean.id));
+            final Set<int> existingIds = listBean.map((e) => e.id!).toSet();
+            listBean.addAll(
+              filteredList.where((bean) => !existingIds.contains(bean.id)),
+            );
+            uploadStatus();
           },
         ),
       ),
@@ -161,6 +183,10 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
 
   @override
   void loadNet() {
+    requestPageData();
+  }
+
+  void uploadStatus(){
     if(listBean.length != 0){
       showSuccess();
     }else{
@@ -172,18 +198,38 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   @override
   void requestPageData({Refresh refresh = Refresh.first}) {
     DataBean bean = DataBean.fromJson(json.decode(SharedUtils.getString(USER_DATA)));
-    httpRequest<List<DataBean>>(api.getMaterialList(1, bean.userid, bean.companyID), (value) {
-      // if (refresh == Refresh.first || refresh == Refresh.pull) {
-      //   listBean.clear();
-      // }
+    httpRequest<List<DataBean>>(api.getMaterialList(pageType, bean.userid, bean.companyID), (value) {
+      if (refresh == Refresh.first || refresh == Refresh.pull) {
+        listMaterialBean.clear();
+      }
       for (DataBean bean in value) {
         if (bean.pic is List<DataBean>) {
           List<DataBean> picList = bean.pic as List<DataBean>;
           bean.pic = picList.where((picc) => picc.image?.isNotEmpty ?? false).toList();
         }
       }
+      final roNoMap = {for (var bean in listBean) bean.roNo: bean};
+      value.forEach((materialBean) {
+        if (roNoMap.containsKey(materialBean.roNo)) {
+          materialBean.isSave = roNoMap[materialBean.roNo]!.isSave;
+        }
+      });
       listMaterialBean.addAll(value);
-      // hideRefresh(refreshController, finishLoadMore: true);
+
+      final materialBeanMap = {for (var bean in listMaterialBean) bean.roNo: bean};
+      for (var bean in listBean) {
+        if (materialBeanMap.containsKey(bean.roNo)) {
+          final matchingBean = materialBeanMap[bean.roNo]!;
+          bean.materialName = matchingBean.materialName;
+          bean.purposeName = matchingBean.purposeName;
+          bean.inventoryLimit = matchingBean.inventoryLimit;
+          bean.inventoryNum = matchingBean.inventoryNum;
+          bean.pic = matchingBean.pic;
+        }
+      }
+      listBean.refresh();
+      uploadStatus();
+      hideRefresh(refreshController, finishLoadMore: true);
     }, handleError: true, handleSuccess: false);
   }
 
@@ -213,7 +259,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
   void _apiGetMaterialList() {
     Get.showLoading();
     DataBean bean = DataBean.fromJson(json.decode(SharedUtils.getString(USER_DATA)));
-    httpRequest<List<DataBean>>(api.getMaterialList(1, bean.userid, bean.companyID), (value) {
+    httpRequest<List<DataBean>>(api.getMaterialList(pageType, bean.userid, bean.companyID), (value) {
       Get.dismiss();
       if (refresh == Refresh.first || refresh == Refresh.pull) {
         listMaterialBean.clear();
@@ -243,7 +289,7 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
     // }else{
     //   _apigetLocationMaterial(context, index);
     // }
-    _showItemEdidDialog(context, index, bean.loc!);
+    _showItemEdidDialog(context, index, bean.loc);
   }
 
   void _apigetLocationMaterial(BuildContext context, int index) {
@@ -256,16 +302,17 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
     // }, showLoading: false);
   }
 
-  void _showItemEdidDialog(BuildContext context, int index, List<DataBean> locBean){
+  void _showItemEdidDialog(BuildContext context, int index, List<DataBean>? locBean){
     Get.bottomSheet(
+      isScrollControlled: true,
       Container(
+        height: MediaQuery.of(Get.context!).size.height * 0.7,
         width: double.maxFinite,
-        height: MediaQuery.of(context).size.height / 1,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        child: DialogMaterialExitWidgets(pageType.value, index, listBean[index], locBean),
+        child: DialogMaterialExitWidgets(pageType, index, listBean[index], locBean),
       ),
     );
   }
@@ -322,7 +369,9 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
           for (var bean in listMaterialBean.where((bean) => bean.id == id)) {
             bean.isSave = false;
             bean.isEdit = false;
-            if (bean.loc != null) {
+            bean.inventoryNum -= num;
+            bean.loctionNum -= num;
+            /*if (bean.loc != null) {
               DataBean matchingBean = bean.loc!.firstWhere((dataBean) => dataBean.loctionRoNo == locationRoNo);
               if (matchingBean != null) {
                 matchingBean.loctionNum = matchingBean.loctionNum - num;
@@ -335,16 +384,15 @@ class MaterialExitLogic extends BaseRefreshController<ApiService> {
                   locBean.loctionNum = locBean.loctionNum - num;
                 }
               }
-
-            }
+            }*/
           }
         }
 
-        for (DataBean bean in listMaterialBean) {
+        /*for (DataBean bean in listMaterialBean) {
           bean.inventoryNum = bean.loc?.fold(0, (sum, element) => sum! + element.loctionNum) ?? 0;
-        }
+        }*/
 
-        loadNet();
+        uploadStatus();
       }else{
 
       }

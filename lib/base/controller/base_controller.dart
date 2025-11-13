@@ -6,7 +6,6 @@ import 'package:event_bus/event_bus.dart';
 import 'package:fyyc/api/UIHelper.dart';
 import 'package:fyyc/bean/DataBean.dart';
 import 'package:fyyc/ext/get_extension.dart';
-import 'package:fyyc/utlis/language/Messages.dart';
 import 'package:fyyc/utlis/mixin/log/LogUtils.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +14,7 @@ import '../../ext/Ext.dart';
 import '../../http/app_except.dart';
 import '../../http/result/base_result.dart';
 import '../../http/result/base_wan_result.dart';
+import '../../res/language/Messages.dart';
 import '../../utlis/mixin/toast/toast_mixin.dart';
 
 ///具有状态控制和网络请求能力的controller，等价MVVM中的ViewModel
@@ -27,7 +27,7 @@ abstract class BaseController<M> extends SuperController with ToastMixin {
   @override
   void onInit() {
     super.onInit();
-    // LogUtils.e('>>>>>>>onInit');
+    LogUtils.e('>>>>>>>onInit');
   }
 
   void loadNet();
@@ -130,7 +130,7 @@ abstract class BaseController<M> extends SuperController with ToastMixin {
   @override
   void onReady() {
     super.onReady();
-    // LogUtils.e('>>>>>>>onReady');
+    LogUtils.e('>>>>>>>onReady');
     if (useEventBus()) {
       eventBus = Get.find<EventBus>();
     }
@@ -147,7 +147,7 @@ abstract class BaseController<M> extends SuperController with ToastMixin {
     super.onClose();
     //解订阅EventBus
     disposeEventBus();
-    // LogUtils.e('>>>>>>>onClose');
+    LogUtils.e('>>>>>>>onClose');
   }
 
   ///解订阅StreamSubscription--关联EventBus

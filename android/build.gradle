@@ -2,22 +2,10 @@ buildscript {
     ext.kotlin_version = '1.8.22'
 //    ext.kotlin_version = <latest-version>
     repositories {
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/gradle-plugin'
-        }
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/central'
-        }
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/public'
-        }
-         maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/apache-snapshots'
-        }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url "https://storage.flutter-io.cn/download.flutter.io" }
     }
 
 
@@ -29,22 +17,10 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/gradle-plugin'
-        }
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/central'
-        }
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/public'
-        }
-        maven {
-            allowInsecureProtocol = true
-            url 'https://maven.aliyun.com/repository/apache-snapshots'
-        }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url "https://storage.flutter-io.cn/download.flutter.io" }
     }
 
 }

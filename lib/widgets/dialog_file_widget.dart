@@ -1,16 +1,15 @@
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fyyc/utlis/mixin/toast/toast_mixin.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../utlis/language/Messages.dart';
 import 'package:path/path.dart' as p;
+
+import '../res/language/Messages.dart';
 
 typedef OnSaveCallback = void Function(List<File> filteredList);
 

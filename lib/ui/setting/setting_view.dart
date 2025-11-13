@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import '../../base/pageWidget/base_stateless_widget.dart';
 import '../../ext/Ext.dart';
 import '../../res/colors.dart';
-import '../../utlis/language/Messages.dart';
+import '../../res/language/Messages.dart';
 import '../../widgets/CustomIconButton.dart';
 import '../../widgets/TextFieldWeight1.dart';
 import '../../widgets/dialog/dialog_alert.dart';
@@ -115,7 +115,8 @@ class SettingPage extends BaseStatelessWidget<SettingLogic> {
                           Get.dialog(
                             MyAlertDialog(
                               content: Globalization.success.tr, // 对话框内容
-                              posiVisible: false,
+                              posiVisible: true,
+                              negaVisible: false,
                             ),
                           );
                         },

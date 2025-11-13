@@ -17,10 +17,13 @@ DataBean _$DataBeanFromJson(Map<String, dynamic> json) => DataBean(
       loctionNum: (json['LoctionNum'] as num?)?.toInt() ?? 0,
       inventoryLimit: (json['InventoryLimit'] as num?)?.toInt() ?? 0,
       inventoryNum: (json['InventoryNum'] as num?)?.toInt() ?? 0,
+      loctionLevel: (json['LoctionLevel'] as num?)?.toInt() ?? 0,
+      allLoctionNum: (json['allLoctionNum'] as num?)?.toInt() ?? 0,
       orderNumber: json['order_number'] as String? ?? null,
       status: json['Status'] as String? ?? null,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       code: (json['code'] as num?)?.toInt() ?? 0,
+      type: (json['type'] as num?)?.toInt() ?? 0,
       location: json['location'] as String? ?? null,
       validityDate: json['ValidityDate'] as String? ?? null,
       locRoNo: json['LocRoNo'] as String? ?? null,
@@ -29,14 +32,20 @@ DataBean _$DataBeanFromJson(Map<String, dynamic> json) => DataBean(
       loctionRoNo: json['LoctionRoNo'] as String? ?? null,
       userid: json['userid'] as String? ?? null,
       locationName: json['LocationName'] as String? ?? null,
+      locTopRoNo: json['LocTopRoNo'] as String? ?? null,
       image: json['image'] as String? ?? null,
       supplier: json['Supplier'] as String? ?? null,
       isSave: json['isSave'] as bool? ?? false,
       isEdit: json['isEdit'] as bool? ?? false,
+      isDelete: json['isDelete'] as bool? ?? false,
+      isExpanded: json['isExpanded'] as bool? ?? false,
       pic: (json['Pic'] as List<dynamic>?)
           ?.map((e) => DataBean.fromJson(e as Map<String, dynamic>))
           .toList(),
       loc: (json['Loc'] as List<dynamic>?)
+          ?.map((e) => DataBean.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      list: (json['List'] as List<dynamic>?)
           ?.map((e) => DataBean.fromJson(e as Map<String, dynamic>))
           .toList(),
     )
@@ -53,12 +62,16 @@ Map<String, dynamic> _$DataBeanToJson(DataBean instance) => <String, dynamic>{
       'LocationName': instance.locationName,
       'password': instance.password,
       'quantity': instance.quantity,
+      'LoctionLevel': instance.loctionLevel,
       'ID': instance.id,
       'code': instance.code,
       'quantity2': instance.quantity2,
+      'type': instance.type,
+      'allLoctionNum': instance.allLoctionNum,
       'InventoryLimit': instance.inventoryLimit,
       'InventoryNum': instance.inventoryNum,
       'LoctionNum': instance.loctionNum,
+      'LocTopRoNo': instance.locTopRoNo,
       'order_number': instance.orderNumber,
       'ValidityDate': instance.validityDate,
       'LocRoNo': instance.locRoNo,
@@ -78,6 +91,9 @@ Map<String, dynamic> _$DataBeanToJson(DataBean instance) => <String, dynamic>{
       'Supplier': instance.supplier,
       'isSave': instance.isSave,
       'isEdit': instance.isEdit,
+      'isDelete': instance.isDelete,
+      'isDelete': instance.isExpanded,
       'Pic': instance.pic,
       'Loc': instance.loc,
+      'List': instance.list,
     };

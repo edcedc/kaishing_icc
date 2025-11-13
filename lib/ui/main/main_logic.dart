@@ -1,13 +1,15 @@
 import 'dart:convert';
 
+import 'package:event_bus/event_bus.dart';
 import 'package:get/get.dart';
 
 import '../../api/api_service.dart';
 import '../../base/controller/base_refresh_controller.dart';
 import '../../bean/DataBean.dart';
+import '../../event/event_item_upload.dart';
 import '../../ext/Ext.dart';
+import '../../res/language/Messages.dart';
 import '../../utlis/SharedUtils.dart';
-import '../../utlis/language/Messages.dart';
 
 class MainLogic extends BaseRefreshController<ApiService> {
 
@@ -17,11 +19,16 @@ class MainLogic extends BaseRefreshController<ApiService> {
 
   var selectedIndex = 0.obs;
 
+  var isLongPressed = false.obs;
+
   @override
   void onReady() {
     super.onReady();
     showSuccess();
     _initAccountPwd();
+    Get.put(EventBus()).on<EventItemUpload>().listen((event) {
+      isLongPressed.value = event.isLongPressed;
+    });
   }
 
   void _initAccountPwd(){

@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../api/UIHelper.dart';
+import '../res/language/Messages.dart';
 import '../ui/binding/GetBinding.dart';
-import '../utlis/language/Messages.dart';
 
 class MyApplication extends StatefulWidget {
   const MyApplication({super.key});
@@ -40,6 +40,7 @@ class _MyApplicationState extends State<MyApplication> {
         designSize: const Size(750, 1334),
         builder: (BuildContext context, Widget? widget) {
           return GetMaterialApp(
+            enableLog: true,
             initialRoute: UIHelper.start,
             getPages: UIHelper.getPages,
             defaultTransition: Transition.rightToLeft,

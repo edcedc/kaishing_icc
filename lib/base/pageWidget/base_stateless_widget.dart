@@ -21,7 +21,6 @@ abstract class BaseStatelessWidget<T extends BaseController> extends GetView<T>
         appBar: _createAppBar(context),
         body: _buildBody(context),
         drawer: showDrawer() ? createDrawer(context) : null,
-
       ),
     );
   }

@@ -8,7 +8,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import '../api/UIHelper.dart';
 import '../bean/DataBean.dart';
-import '../utlis/language/Messages.dart';
+import '../res/language/Messages.dart';
 import 'hig_hlight_text.dart';
 import 'item/item_material_widgets.dart';
 
@@ -18,6 +18,7 @@ import 'package:get/get.dart';
 typedef OnSaveCallback = void Function(List<DataBean> filteredList);
 
 class DialogMaterialListWidgets extends StatefulWidget {
+
   final int pageType;
   final List<DataBean> listBean;
   final OnSaveCallback onSave;

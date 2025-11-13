@@ -44,7 +44,7 @@ class _StartPageState extends BaseState<StartPage> {
     var string = SharedUtils.getString(USER_DATA);
     if(!string.isEmpty){
       DataBean bean = DataBean.fromJson(json.decode(string));
-      if(bean != null && bean.loginID != null && bean.password!.isNotEmpty){
+      if(bean != null && bean.loginID != null && bean.password != null){
         UIHelper.startMain();
       }else{
         UIHelper.startLogin();

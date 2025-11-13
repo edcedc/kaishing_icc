@@ -53,12 +53,14 @@ class Globalization {
   static const String add = "添加";
   static const String profile = "资料";
   static const String upload1 = "是否上传";
+  static const String delete1 = "是否删除";
   static const String text4 = "出仓数量有误";
   static const String photo = "拍照";
   static const String local_file = "本地文件";
   static const String proveedores  = "供应商";
   static const String expiration_date = "有效日期";
   static const String text5 = "不能超过3件";
+  static const String all = "全选";
 
 }
 
@@ -82,6 +84,7 @@ class Messages extends Translations {
           Globalization.confirm: "Confirm",
           Globalization.success: "Success",
           Globalization.cancel: "Cancel",
+          Globalization.all: "All",
           Globalization.text1: "The URL/CompanyId cannot be empty",
           Globalization.text2: "Account/Password cannot be empty",
           Globalization.text3: "Account password error",
@@ -105,6 +108,7 @@ class Messages extends Translations {
           Globalization.add: "Add",
           Globalization.profile: "Profile",
           Globalization.upload1: "Confirm upload",
+          Globalization.delete1: "Confirm delete",
           Globalization.error_page: "Confirm upload",
           Globalization.retry: "Confirm upload",
           Globalization.error_page: "Page loading exception",
@@ -136,6 +140,7 @@ class Messages extends Translations {
           Globalization.confirm: "确认",
           Globalization.success: "成功",
           Globalization.cancel: "取消",
+          Globalization.all: "全选",
           Globalization.text1: "URL/CompanyId不能为空",
           Globalization.text2: "账号/密码不能为空",
           Globalization.text3: "账号密码错误",
@@ -160,6 +165,7 @@ class Messages extends Translations {
           Globalization.add: "添加",
           Globalization.profile: "资料",
           Globalization.upload1: "确认上传",
+          Globalization.delete1: "确认删除",
           Globalization.error_page: "页面加载异常",
           Globalization.retry: "点我重试",
           Globalization.please_login_again: "请重新登录",
@@ -189,6 +195,7 @@ class Messages extends Translations {
           Globalization.confirm: "確認",
           Globalization.success: "成功",
           Globalization.cancel: "取消",
+          Globalization.all: "全選",
           Globalization.text1: "URL/CompanyId不能為空",
           Globalization.text2: "帳號/密碼不能為空",
           Globalization.text3: "帳號密碼錯誤",
@@ -213,6 +220,7 @@ class Messages extends Translations {
           Globalization.add: "添加",
           Globalization.profile: "資料",
           Globalization.upload1: "確認上傳",
+          Globalization.delete1: "確認删除",
           Globalization.error_page: "頁面加載异常",
           Globalization.retry: "點我重試",
           Globalization.please_login_again: "請重新登入",

@@ -49,5 +49,38 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<true/>
+
+		<!-- 1. 網路權限 (對應Android INTERNET/ACCESS_NETWORK_STATE/ACCESS_WIFI_STATE) -->
+        <key>NSAppTransportSecurity</key>
+        <dict>
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+        </dict>
+        <key>NSLocalNetworkUsageDescription</key>
+        <string>需要存取網路狀態以提供更好的服務</string>
+
+        <!-- 2. 儲存權限 (對應Android READ/WRITE_EXTERNAL_STORAGE) -->
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>需要存取相簿以儲存或選擇媒體檔案</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>需要儲存檔案到相簿</string>
+        <key>NSDocumentsFolderUsageDescription</key>
+        <string>需要存取文件目錄以讀寫檔案</string>
+        <key>NSDownloadsFolderUsageDescription</key>
+        <string>需要存取下載目錄</string>
+
+        <!-- 3. 相機/麥克風權限 -->
+        <key>NSCameraUsageDescription</key>
+        <string>需要使用相機拍攝照片和影片</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>需要錄製音訊</string>
+
+        <!-- 4. 媒體庫權限 (對應Android MEDIA_MOUNTED) -->
+        <key>NSAppleMusicUsageDescription</key>
+        <string>需要存取媒體庫</string>
+        <key>NSAppleMusicUsageDescription</key>
+        <string>需要存取音樂庫</string>
+        <key>kTCCServiceMediaLibrary</key>
+        <string>需要存取媒體檔案</string>
 	</dict>
 </plist>

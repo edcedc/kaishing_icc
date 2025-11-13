@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyyc/ext/get_extension.dart';
 import 'package:get/get.dart';
 
-import '../../utlis/language/Messages.dart';
+import '../../res/language/Messages.dart';
 
 class MyAlertDialog extends StatelessWidget {
 
@@ -46,7 +46,12 @@ class MyAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title.isEmpty ? Globalization.appName.tr : title),
-      content: Text(content, style: TextStyle(fontSize: 16),),
+      content: Text(
+        content,
+        style: TextStyle(fontSize: 16),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       actions: [
         if (negaVisible)
           TextButton(

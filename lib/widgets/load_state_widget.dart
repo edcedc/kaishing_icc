@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 
 import '../base/controller/base_controller.dart';
 import '../res/colors.dart';
+import '../res/language/Messages.dart';
 import '../res/style.dart';
-import '../utlis/language/Messages.dart';
 
 ///空布局
 Widget createEmptyWidget(BaseController controller) {

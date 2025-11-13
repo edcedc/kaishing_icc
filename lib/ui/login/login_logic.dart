@@ -14,7 +14,7 @@ import '../../base/controller/base_refresh_controller.dart';
 import '../../bean/BaseResponseBean.dart';
 import '../../bean/DataBean.dart';
 import '../../ext/Ext.dart';
-import '../../utlis/language/Messages.dart';
+import '../../res/language/Messages.dart';
 import '../../utlis/mixin/log/LogUtils.dart';
 import '../../widgets/dialog/dialog_alert.dart';
 

@@ -10,12 +10,14 @@ import 'package:get/get.dart';
 
 import '../../base/pageWidget/base_stateless_widget.dart';
 import '../../bean/DataBean.dart';
+import '../../event/event_item_upload.dart';
 import '../../event/event_main.dart';
 import '../../ext/Ext.dart';
 import '../../res/colors.dart';
+import '../../res/language/Messages.dart';
 import '../../utlis/SharedUtils.dart';
-import '../../utlis/language/Messages.dart';
 import '../../widgets/text_icon_button_widget.dart';
+import '../text_page.dart';
 import 'main_logic.dart';
 import 'material/material_entry/material_entry_logic.dart';
 import 'material/material_entry/material_entry_view.dart';
@@ -43,9 +45,15 @@ class MainPage extends BaseStatelessWidget<MainLogic> {
 
   @override
   List<Widget>? appBarActionWidget(BuildContext context) {
-    return [IconButton(onPressed: () {
-      eventBus.fire(EventMain(logic.selectedIndex.value, -1));
-    }, icon: const Icon(Icons.upload))];
+    return [
+      Obx(() => IconButton(onPressed: () {
+        if(logic.isLongPressed.value){
+          eventBus.fire(EventMain(logic.selectedIndex.value, 3));
+        }else{
+          eventBus.fire(EventMain(logic.selectedIndex.value, -1));
+        }
+      }, icon: logic.isLongPressed.value ? Icon(Icons.delete) : Icon(Icons.upload)))
+    ];
   }
 
   List<Widget> tabViewList = [
@@ -107,6 +115,9 @@ class MainPage extends BaseStatelessWidget<MainLogic> {
               materialEntryLogic.loadNet();
               logic.selectedIndex.value = 0;
               Navigator.pop(context);
+              Get.put(EventBus()).fire(EventItemUpload(isLongPressed: false, isAll: false));
+              // materialEntryLogic.isLongPressed.value = false;
+              // materialExitLogic.isLongPressed.value = false;
             },
           ),
           ListTile(
@@ -116,6 +127,9 @@ class MainPage extends BaseStatelessWidget<MainLogic> {
               materialExitLogic.loadNet();
               logic.selectedIndex.value = 1;
               Navigator.pop(context);
+              Get.put(EventBus()).fire(EventItemUpload(isLongPressed: false, isAll: false));
+              // materialExitLogic.isLongPressed.value = false;
+              // materialEntryLogic.isLongPressed.value = false;
             },
           ),
           ListTile(
@@ -147,7 +161,9 @@ class MainPage extends BaseStatelessWidget<MainLogic> {
   Widget buildContent(BuildContext context) {
     return Scaffold(
       body: Obx(() => tabViewList[logic.selectedIndex.value]),
-      floatingActionButton: Column(
+      floatingActionButton: Obx(() => Visibility(
+        visible: !logic.isLongPressed.value,
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             FloatingActionButton(
@@ -190,6 +206,7 @@ class MainPage extends BaseStatelessWidget<MainLogic> {
             ),
           ],
         ),
+      )),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
