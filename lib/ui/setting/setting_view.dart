@@ -35,8 +35,11 @@ class SettingPage extends BaseStatelessWidget<SettingLogic> {
       statusBarColor: Color(0xFFCCCCCC), // 状态栏颜色
       statusBarIconBrightness: Brightness.dark, // 状态栏图标亮度
     ));
-    String url = logic.url.value;
-    String companyId = logic.company_id.value;
+
+    // url.value = SharedUtils.getString(BASE_URL)!;
+    // company_id.value = SharedUtils.getString(COMPANY_ID)!;
+    String url = SharedUtils.getString(BASE_URL)!;
+    String companyId = SharedUtils.getString(COMPANY_ID)!;
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
@@ -68,8 +71,8 @@ class SettingPage extends BaseStatelessWidget<SettingLogic> {
                     SizedBox(height: 20),
                     DropdownLanguageWeight(),
                     SizedBox(height: 10),
-                    Obx(() => TextField(
-                        controller: TextEditingController(text: logic.url.value),
+                    TextField(
+                        controller: TextEditingController(text: url),
                         decoration: InputDecoration(
                             hintText: Globalization.url.tr,
                             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
@@ -79,20 +82,20 @@ class SettingPage extends BaseStatelessWidget<SettingLogic> {
                         onChanged: (text) {
                           url = text;
                         }
-                    )),
+                    ),
                     SizedBox(height: 10),
-                    Obx(() => TextField(
-                        controller: TextEditingController(text: logic.company_id.value),
+                    TextField(
+                        controller: TextEditingController(text: companyId),
                         decoration: InputDecoration(
                             hintText: Globalization.company_id.tr,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0), // 设置左右内间距为 20，上下内间距为 0
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
                             border: OutlineInputBorder(
                             )
                         ),
                         onChanged: (text) {
                           companyId = text;
                         }
-                    )),
+                    ),
                     SizedBox(height: 20),
                     Container(
                       width: double.maxFinite,

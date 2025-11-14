@@ -1,5 +1,6 @@
 import 'package:fyyc/ext/Ext.dart';
 import 'package:fyyc/utlis/SharedUtils.dart';
+import 'package:fyyc/utlis/mixin/log/LogUtils.dart';
 import 'package:get/get.dart';
 
 import '../../api/api_service.dart';
@@ -19,6 +20,13 @@ class SettingLogic extends BaseRefreshController<ApiService> {
   }
 
   @override
+  void onResumed() {
+    super.onResumed();
+    LogUtils.e(url.toString());
+    LogUtils.e(company_id.toString());
+  }
+
+  @override
   void onClose() {
     super.onClose();
   }
@@ -27,4 +35,5 @@ class SettingLogic extends BaseRefreshController<ApiService> {
   void onHidden() {
 
   }
+
 }
