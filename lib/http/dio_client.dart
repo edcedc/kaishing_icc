@@ -22,9 +22,9 @@ class DioClient {
   }
 
   ///超时时间
-  Duration _connectTimeout = const Duration(seconds: 10);
-  Duration _receiveTimeout = const Duration(seconds: 10);
-  Duration _sendTimeout = const Duration(seconds: 10);
+  Duration _connectTimeout = const Duration(seconds: 60);
+  Duration _receiveTimeout = const Duration(seconds: 60);
+  Duration _sendTimeout = const Duration(seconds: 60);
 
   static final DioClient _instance = DioClient._internal();
 
